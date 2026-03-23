@@ -1,13 +1,22 @@
 
 import TaskItem from "../components/TaskItem";  
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 
 function Tasks(){
 
    const [input, setInput] = useState("");
-   const [tasks, setTasks] = useState([]);
+   
+   const [tasks, setTasks] = useState(() => {
+      const saved = localStorage.getItem("tasks");
+      return saved ? JSON.parse(saved) : [];
+   });
 
+   useEffect
+   (() => {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+   }, [tasks]);
+   
    const toggleTask = (indexToToggle) => {
       const updatedTasks = tasks.map((task,index) => {
          if(index === indexToToggle){
