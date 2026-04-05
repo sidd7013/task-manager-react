@@ -1,16 +1,49 @@
+import { useState } from "react";
+import { updateTaskApi } from "../services/taskService";
 
-function TaskItem({task,index, deleteTask, toggleTask}){
+function TaskItem({task,deleteTask,toggleTask,updateTaskInState}){
+    const [isEditing, setIsEditing] = useState(false);
+    const [editText, setEditText] = useState(task.text);
+    
+    const handleUpdate = () => {
+            const updatedTask = { ...task, text: editText };
+
+            updateTaskApi(task.id, updatedTask)
+                .then((res) => {
+                    updateTaskInState(res.data);
+                    setIsEditing(false);
+                })
+                .catch((err) => console.error(err));
+                };
+            
     return(
        <div>
-            <li>
-                <input type="checkbox" checked={task.completed} onChange={() => toggleTask(index)} />
-                <span
-                    style={{
-                        textDecoration: task.completed ? "line-through" : "none",
-                        color: task.completed ? "gray" : "white"
-                    }} >
-                    {task.text}</span>
-                <button onClick={() => deleteTask(index)}>Delete</button>
+            <li style={{ margin: "10px 0" }}>
+                <input type="checkbox" checked={task.completed} onChange={() => toggleTask(task)} />
+              
+
+            {isEditing ? (<input
+                            value={editText}
+                            onChange={(e) => setEditText(e.target.value)}
+                        />) :
+                         (<span
+                            style={{
+                            textDecoration: task.completed ? "line-through" : "none"
+                            }}
+                        >
+                            {task.text}
+                        </span>)}
+
+           <button onClick={() => setIsEditing(!isEditing)}> {isEditing ? "Cancel" : "Edit"} </button>
+
+            {isEditing && (
+            <button onClick={handleUpdate}>
+                Save
+            </button>
+            )}
+            
+            <button  style={{ marginLeft: "10px" }}  onClick={() => deleteTask(task.id)}>Delete</button>
+
             </li>
        </div>
 
