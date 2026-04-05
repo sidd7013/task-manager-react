@@ -18,7 +18,7 @@ function TaskItem({task,deleteTask,toggleTask,updateTaskInState}){
             
     return(
        <div>
-            <li style={{ margin: "10px 0" }}>
+            <li style={{ margin: "12px 0", display: "flex", alignItems: "center", gap: "10px" }}>
                 <input type="checkbox" checked={task.completed} onChange={() => toggleTask(task)} />
               
 

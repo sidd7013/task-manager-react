@@ -1,17 +1,19 @@
 
 import TaskItem from "../components/TaskItem";  
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { getTasks, createTask } from  "../services/taskService";   
 import { deleteTaskApi, toggleTaskApi } from "../services/taskService";
 
 
 function Tasks(){
 
+   const [search , setSearch] = useState("");
    const [error, setError] = useState("");
    const [loading, setLoading] = useState(true);
    const [input, setInput] = useState("");
    const [tasks, setTasks] = useState([]);
-   const [filter, setFilter] = useState("all");
+   const [filter, setFilter] = useState(()=>{return localStorage.getItem("filter") || "all";});
+
 
    const toggleTask = (task) => {
       const updatedTask = { ...task, completed: !task.completed };
@@ -34,7 +36,9 @@ function Tasks(){
                                        if (filter === "completed") return task.completed;
                                        if (filter === "pending") return !task.completed;
                                        return true;
-                                 });
+                                 })
+                                 .filter(task=>task.text.toLowerCase().includes(search.toLowerCase()));
+
 
    const updateTaskInState = (updatedTask) => {
                                           setTasks(prevTasks =>
@@ -79,7 +83,11 @@ function Tasks(){
                       .finally(()=>setLoading(false));
          }, []);
 
-        
+
+
+      useEffect(() => {
+         localStorage.setItem("filter", filter);
+      }, [filter]);
 
     return (
       <div style={{
@@ -98,12 +106,18 @@ function Tasks(){
                boxShadow: "0 4px 10px rgba(0,0,0,0.3)"
             }}>
          <h2>Task Manager -tasks</h2>
+
+         <p>
+            Total:{tasks.length} | Completed: {tasks.filter(t=>t.completed).length} | Pending: {tasks.filter(t=>!t.completed).length}
+         </p>
           
           <div style={{ marginBottom: "10px" }}>
-            <button onClick={() => setFilter("all")} >All</button>
-            <button onClick={() => setFilter("completed")} style={{marginLeft:"5px"}}>Completed</button>
-            <button onClick={() => setFilter("pending")} style={{marginLeft:"5px"}}>Pending</button>
+            <button onClick={() => setFilter("all")} style={{padding:" 5px 10px", background: filter==="all"?"#4caf50":""}}>All</button>
+            <button onClick={() => setFilter("completed")} style={{padding:" 5px 10px", marginLeft: "5px", background: filter==="completed"?"#4caf50":""}}>Completed</button>
+            <button onClick={() => setFilter("pending")} style={{padding:" 5px 10px", marginLeft: "5px", background: filter==="pending"?"#4caf50":""}}>Pending</button>
           </div>
+
+
           
 
          <input type="text" placeholder="Enter the task" value={input} onChange={(e) => setInput(e.target.value)} />
@@ -114,6 +128,8 @@ function Tasks(){
 
            {/* ✅ Error */}
            {error && <p style={{ color: "red" }}>{error}</p>}
+
+           <input type="text" placeholder="Search task..." value={search} onChange={(e) => setSearch(e.target.value)} style={{marginBottom: "10px",width: "100%"}}/>
 
          <ul>
             {!loading &&tasks.length === 0 && <p>No tasks found</p>}
