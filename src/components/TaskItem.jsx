@@ -3,10 +3,10 @@ import { updateTaskApi } from "../services/taskService";
 
 function TaskItem({task,deleteTask,toggleTask,updateTaskInState}){
     const [isEditing, setIsEditing] = useState(false);
-    const [editText, setEditText] = useState(task.text);
+    const [editText, setEditText] = useState(task.title);
     
     const handleUpdate = () => {
-            const updatedTask = { ...task, text: editText };
+            const updatedTask = { ...task, title: editText };
 
             updateTaskApi(task.id, updatedTask)
                 .then((res) => {
@@ -31,7 +31,7 @@ function TaskItem({task,deleteTask,toggleTask,updateTaskInState}){
                             textDecoration: task.completed ? "line-through" : "none"
                             }}
                         >
-                            {task.text}
+                            {task.title}
                         </span>)}
 
            <button onClick={() => setIsEditing(!isEditing)}> {isEditing ? "Cancel" : "Edit"} </button>
@@ -49,6 +49,4 @@ function TaskItem({task,deleteTask,toggleTask,updateTaskInState}){
 
     );
 }
-
-
 export default TaskItem;

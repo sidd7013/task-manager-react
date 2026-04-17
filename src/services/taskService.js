@@ -2,6 +2,7 @@ import axios from "axios";
 
 const API_URL = "https://task-manager-backend-uq7s.onrender.com/tasks";
 
+
 export const getTasks =()=>{
     return axios.get(API_URL);
 };

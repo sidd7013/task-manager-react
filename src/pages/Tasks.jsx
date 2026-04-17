@@ -1,4 +1,3 @@
-
 import TaskItem from "../components/TaskItem";  
 import { useState, useEffect } from "react";
 import { getTasks, createTask } from  "../services/taskService";   
@@ -37,7 +36,7 @@ function Tasks(){
                                        if (filter === "pending") return !task.completed;
                                        return true;
                                  })
-                                 .filter(task=>task.text.toLowerCase().includes(search.toLowerCase()));
+                                 .filter(task=>task.title.toLowerCase().includes(search.toLowerCase()));
 
 
    const updateTaskInState = (updatedTask) => {
@@ -53,7 +52,7 @@ function Tasks(){
          return;
        }
        
-       createTask({ text: input, completed: false })
+       createTask({ title: input, completed: false })
          .then((response) => { 
             setTasks((prev)=>[...prev, response.data]);
             setInput("");
@@ -146,9 +145,5 @@ function Tasks(){
         </div>
       </div>
    )
-
-
-
 }
-
 export default Tasks;
