@@ -3,34 +3,26 @@ import { useState, useEffect } from "react";
 import { getTasks, createTask } from  "../services/taskService";   
 import { deleteTaskApi, toggleTaskApi } from "../services/taskService";
 
-
 function Tasks(){
-
    const [search , setSearch] = useState("");
    const [error, setError] = useState("");
    const [loading, setLoading] = useState(true);
    const [input, setInput] = useState("");
    const [tasks, setTasks] = useState([]);
    const [filter, setFilter] = useState(()=>{return localStorage.getItem("filter") || "all";});
-
-
    const toggleTask = (task) => {
       const updatedTask = { ...task, completed: !task.completed };
-
       setTasks(prevTasks =>
          prevTasks.map(t =>
             t.id === task.id ? updatedTask : t
          )
       );
-
-     toggleTaskApi(task.id, updatedTask)
+      toggleTaskApi(task.id, updatedTask)
                      .catch((err) => {
                         console.error(err);
                         alert("Toggle failed ❌");
                      });
-
-   };
-
+  };
    const filteredTasks = tasks.filter(task => {
                                        if (filter === "completed") return task.completed;
                                        if (filter === "pending") return !task.completed;
@@ -38,28 +30,24 @@ function Tasks(){
                                  })
                                  .filter(task=>task.title.toLowerCase().includes(search.toLowerCase()));
 
-
    const updateTaskInState = (updatedTask) => {
                                           setTasks(prevTasks =>
                                              prevTasks.map(task =>
                                                 task.id === updatedTask.id ? updatedTask : task
-                                             )
-                                          );
+                                             ));
                                           };                           
    const addTask = () => {
        if(input.trim() === ""){
          alert("Task cannot be empty ❗");
          return;
        }
-       
        createTask({ title: input, completed: false })
          .then((response) => { 
             setTasks((prev)=>[...prev, response.data]);
             setInput("");
          })
          .catch((error) => { console.error(error); });
-
-   };
+       };
 
    const deleteTask = (id) => {
       deleteTaskApi(id).then(() => {
@@ -116,9 +104,6 @@ function Tasks(){
             <button onClick={() => setFilter("pending")} style={{padding:" 5px 10px", marginLeft: "5px", background: filter==="pending"?"#4caf50":""}}>Pending</button>
           </div>
 
-
-          
-
          <input type="text" placeholder="Enter the task" value={input} onChange={(e) => setInput(e.target.value)} />
          <button style={{ marginLeft: "10px" }} onClick={addTask}>Add Task</button>
 
@@ -129,7 +114,7 @@ function Tasks(){
            {error && <p style={{ color: "red" }}>{error}</p>}
 
            <input type="text" placeholder="Search task..." value={search} onChange={(e) => setSearch(e.target.value)} style={{marginBottom: "10px",width: "100%"}}/>
-
+         
          <ul>
             {!loading &&tasks.length === 0 && <p>No tasks found</p>}
             {filteredTasks.map((task) => (

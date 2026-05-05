@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://task-manager-backend-uq7s.onrender.com/tasks";
+const API_URL = window.location.hostname ==="localhost" ? "http://localhost:8080/tasks":"https://task-manager-backend-uq7s.onrender.com/tasks";
 
 
 export const getTasks =()=>{
